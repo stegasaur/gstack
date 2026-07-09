@@ -31,3 +31,11 @@ jobs:
             echo "Generated Factory SKILL.md files are stale. Run: bun run gen:skill-docs --host factory"
             exit 1
           }
+      - name: Check Copilot host freshness
+        run: bun run gen:skill-docs --host copilot
+      - name: Verify Copilot skill docs are fresh
+        run: |
+          git diff --exit-code -- .github/skills/ || {
+            echo "Generated Copilot SKILL.md files are stale. Run: bun run gen:skill-docs --host copilot"
+            exit 1
+          }

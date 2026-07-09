@@ -47,6 +47,7 @@ const STABLE_HOST_ALL_OUTPUTS = [
   '.cursor/skills/gstack-ship/SKILL.md',
   '.factory/skills/gstack-ship/SKILL.md',
   '.gbrain/skills/gstack-ship/SKILL.md',
+  '.github/skills/gstack-ship/SKILL.md',
 ];
 
 function runGen(extraArgs: string[] = []): { exitCode: number; stderr: string } {
