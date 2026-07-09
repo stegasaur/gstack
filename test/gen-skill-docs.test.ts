@@ -2374,7 +2374,7 @@ describe('setup script validation', () => {
 
   test('setup supports --host auto|claude|codex|kiro|opencode', () => {
     expect(setupContent).toContain('--host');
-    expect(setupContent).toContain('claude|codex|kiro|factory|opencode|auto');
+    expect(setupContent).toContain('claude|codex|kiro|factory|opencode|copilot|auto');
   });
 
   test('auto mode detects claude, codex, kiro, and opencode binaries', () => {
@@ -2412,6 +2412,14 @@ describe('setup script validation', () => {
     expect(setupContent).toContain('INSTALL_OPENCODE=');
     expect(setupContent).toContain('OPENCODE_SKILLS="$HOME/.config/opencode/skills"');
     expect(setupContent).toContain('OPENCODE_GSTACK="$OPENCODE_SKILLS/gstack"');
+  });
+
+  test('setup supports --host copilot with INSTALL_COPILOT flag and .github generation', () => {
+    expect(setupContent).toContain('INSTALL_COPILOT=');
+    expect(setupContent).toContain('generate_copilot_github_artifacts');
+    expect(setupContent).toContain('copilot-instructions.md');
+    expect(setupContent).toContain('copilot-setup-steps.yml');
+    expect(setupContent).toContain('.github/skills/');
   });
 
   test('setup installs OpenCode skills into a nested gstack runtime root', () => {
