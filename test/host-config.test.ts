@@ -16,6 +16,7 @@ import {
   getExternalHosts,
   claude,
   codex,
+  copilot,
   factory,
   kiro,
   opencode,
@@ -30,8 +31,8 @@ const ROOT = path.resolve(import.meta.dir, '..');
 // ─── hosts/index.ts ─────────────────────────────────────────
 
 describe('hosts/index.ts', () => {
-  test('ALL_HOST_CONFIGS has 10 hosts', () => {
-    expect(ALL_HOST_CONFIGS.length).toBe(10);
+  test('ALL_HOST_CONFIGS has 11 hosts', () => {
+    expect(ALL_HOST_CONFIGS.length).toBe(11);
   });
 
   test('ALL_HOST_NAMES matches config names', () => {
@@ -47,6 +48,7 @@ describe('hosts/index.ts', () => {
   test('individual config re-exports match registry', () => {
     expect(claude.name).toBe('claude');
     expect(codex.name).toBe('codex');
+    expect(copilot.name).toBe('copilot');
     expect(factory.name).toBe('factory');
     expect(kiro.name).toBe('kiro');
     expect(opencode.name).toBe('opencode');
@@ -409,6 +411,12 @@ describe('golden-file regression', () => {
     const current = fs.readFileSync(path.join(ROOT, '.factory', 'skills', 'gstack-ship', 'SKILL.md'), 'utf-8');
     expect(current).toBe(golden);
   });
+
+  test('Copilot ship skill matches golden baseline', () => {
+    const golden = fs.readFileSync(path.join(GOLDEN_DIR, 'copilot-ship-SKILL.md'), 'utf-8');
+    const current = fs.readFileSync(path.join(ROOT, '.github', 'skills', 'gstack-ship', 'SKILL.md'), 'utf-8');
+    expect(current).toBe(golden);
+  });
 });
 
 // ─── Individual host config correctness ─────────────────────
@@ -526,6 +534,29 @@ describe('host config correctness', () => {
       expect(config.pathRewrites.length).toBeGreaterThan(0);
     }
     expect(claude.pathRewrites.length).toBe(0);
+  });
+
+  test('copilot has CLAUDE.md→.github/copilot-instructions.md path rewrite', () => {
+    expect(copilot.pathRewrites.some(r => r.from === 'CLAUDE.md' && r.to === '.github/copilot-instructions.md')).toBe(true);
+  });
+
+  test('copilot uses .github as hostSubdir', () => {
+    expect(copilot.hostSubdir).toBe('.github');
+  });
+
+  test('copilot has GitHub Copilot co-author trailer', () => {
+    expect(copilot.coAuthorTrailer).toContain('GitHub Copilot');
+  });
+
+  test('copilot has boundary instruction', () => {
+    expect(copilot.boundaryInstruction).toBeDefined();
+    expect(copilot.boundaryInstruction).toContain('Do NOT read');
+  });
+
+  test('copilot suppresses Claude-specific resolvers', () => {
+    expect(copilot.suppressedResolvers).toContain('ADVERSARIAL_STEP');
+    expect(copilot.suppressedResolvers).toContain('CODEX_SECOND_OPINION');
+    expect(copilot.suppressedResolvers).toContain('REVIEW_ARMY');
   });
 
   test('every host has runtimeRoot.globalSymlinks', () => {
